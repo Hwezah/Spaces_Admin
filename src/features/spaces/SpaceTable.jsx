@@ -30,12 +30,8 @@ const TableHeader = styled.header`
 
 export default function SpaceTable() {
   // useQuery is a hook provided by reactQuery to fetch data from an api
-  const {
-    data: spaces,
-    error,
-    isLoading,
-  } = useQuery({
-    querykey: ["space"], // here reactQuery will use this key to identify the query(slot in memory where data is cached)
+  const { data: spaces, isLoading } = useQuery({
+    querykey: ["spaces"], // here reactQuery will use this key to identify the query(slot in memory where data is cached)
     queryFn: getSpaces, // This is the actual api call to fetch the data
   });
   if (isLoading) return <Spinner />; //isLoading, error statuses are provided by reactquery by default

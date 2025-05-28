@@ -4,8 +4,8 @@ import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
-import Textarea from "../../ui/Textarea";
-
+import { Textarea } from "../../ui/Textarea";
+import { useForm } from "react-hook-form";
 const FormRow = styled.div`
   display: grid;
   align-items: center;
@@ -43,21 +43,25 @@ const Error = styled.span`
 `;
 
 function CreateSpaceForm() {
+  // useForm hook to manage form state and validation from react
+  // replaces the need to make inputs controlled components and handles
+  // the form submission logic
+  const { register, handleSubmit, errors, reset } = useForm();
   return (
     <Form>
       <FormRow>
         <Label htmlFor="name">Space name</Label>
-        <Input type="text" id="name" />
+        <Input type="text" id="name" {...register("name")} />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" />
+        <Input type="number" id="maxCapacity" {...register("maxCapacity")} />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" />
+        <Input type="number" id="regularPrice" {...register("regularPrice")} />
       </FormRow>
 
       <FormRow>

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import CreateSpaceForm from "../features/spaces/CreateSpaceForm";
 const StyledModal = styled.div`
   position: fixed;
   top: 50%;
@@ -48,3 +48,10 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
+export default function FormModal() {
+  return (
+    <StyledModal>
+      <CreateSpaceForm />
+    </StyledModal>
+  );
+}

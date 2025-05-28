@@ -3,7 +3,16 @@ export async function getSpaces() {
   const { data, error } = await supabase.from("spaces").select("*");
   if (error) {
     console.error(error);
-    throw new Error("Failed to fetch spaces.");
+    throw new Error("Space could not be retrieved.");
+  }
+  return data;
+}
+
+export async function deleteSpace(id) {
+  const { data, error } = await supabase.from("spaces").delete().eq("id", id); // targets the row to delete(id matching the id passed to the function)
+  if (error) {
+    console.error(error);
+    throw new Error("Space could not be deleted.");
   }
   return data;
 }

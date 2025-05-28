@@ -11,7 +11,7 @@ import AppLayout from "./ui/AppLayout";
 import PageNotFound from "./pages/PageNotFound";
 import GlobalStyles from "./styles/GlobalStyles";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
+import { Toaster } from "react-hot-toast";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -41,6 +41,24 @@ export default function App() {
           <Route path="*" element={<PageNotFound />}></Route>
         </Routes>
       </BrowserRouter>
+      <Toaster
+        position="top-center"
+        gutter={12}
+        containerStyle={{ margin: "8px" }}
+        toastOptions={{
+          success: { duration: 3000 },
+          error: { duration: 5000 },
+          style: {
+            background: "#ffffff",
+            color: "#000000",
+            maxWidth: "400px",
+            borderRadius: "10px",
+            padding: "16px 24px",
+            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+            zIndex: "9999",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }
