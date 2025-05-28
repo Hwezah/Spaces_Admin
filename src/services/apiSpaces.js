@@ -16,3 +16,16 @@ export async function deleteSpace(id) {
   }
   return data;
 }
+
+export async function createSpace(newSpace) {
+  const { data, error } = await supabase
+    .from("spaces")
+    .insert([newSpace])
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Space could not be created.");
+  }
+  return data;
+}
