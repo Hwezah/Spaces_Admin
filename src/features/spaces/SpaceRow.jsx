@@ -1,9 +1,13 @@
 import styled from "styled-components";
 import { formatCurrency } from "../../utils/helpers";
-import { deleteSpace } from "../../services/apiSpaces";
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import UseDeleteSpace from "./useDeleteSpace";
+import { useState } from "react";
+import FormModal from "../../ui/FormModal";
+import {
+  HiMiniTrash,
+  HiMiniPencilSquare,
+  HiMiniDocumentDuplicate,
+} from "react-icons/hi2";
 
 const TableRow = styled.div`
   display: grid;
@@ -45,6 +49,8 @@ const Discount = styled.div`
 `;
 
 export default function SpaceRow({ space }) {
+  const [showForm, setShowForm] = useState(false);
+  const { deleteSpace, isDeleting } = UseDeleteSpace();
   const {
     id: spaceId,
     name,
@@ -54,34 +60,38 @@ export default function SpaceRow({ space }) {
     image,
   } = space;
 
-  const queryClient = useQueryClient();
-  // useMutation is a hook from react-query to delete(mutate) data in this case a space
-  // deleteSpace is a function(from supabase...in my apiSpaces.js) that will be passed to the mutationFn prop of useMutation
-  // mutate then will be called(with the spaceId passed to it) by the button to delete the space from the database
-  const { isLoading: isDeleting, mutate } = useMutation({
-    mutationFn: deleteSpace,
-    // onSuccess is a callback function that will be called when the mutation is successful
-    onSuccess: () => {
-      // invalidateQueries is a function from react-query to invalidate the cached data of the query
-      queryClient.invalidateQueries({ queryKey: ["spaces"] });
-      // toast is a function from react-toastify to show a success message
-      toast.success("Space deleted successfully!");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
   return (
-    <TableRow role="row">
-      <Img src={image} alt={name} />
-      <Space>{name}</Space>
-      <div>fits up to {maxCapacity} guests</div>
-      <Price>{formatCurrency(regularPrice)}</Price>
-      <Discount>{formatCurrency(discount)}</Discount>
-      <button onClick={() => mutate(spaceId)} disabled={isDeleting}>
-        Delete
-      </button>
-    </TableRow>
+    <>
+      <TableRow role="row">
+        <Img src={image} alt={name} />
+        <Space>{name}</Space>
+        <div>fits up to {maxCapacity} guests</div>
+        <Price>{formatCurrency(regularPrice)}</Price>
+        {discount ? (
+          <Discount>{formatCurrency(discount)}</Discount>
+        ) : (
+          <span>&mdash;</span>
+        )}
+        <div className="flex gap-2">
+          <HiMiniPencilSquare
+            size={24}
+            onClick={() => setShowForm((showForm) => !showForm)}
+          />
+          <HiMiniTrash
+            size={24}
+            onClick={() => deleteSpace(spaceId)}
+            disabled={isDeleting}
+          />
+          <HiMiniDocumentDuplicate size={24} />
+        </div>
+      </TableRow>
+      {showForm && (
+        <FormModal
+          spaceToEdit={space}
+          showForm={showForm}
+          setShowForm={setShowForm}
+        />
+      )}
+    </>
   );
 }

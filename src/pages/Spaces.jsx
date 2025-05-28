@@ -4,7 +4,7 @@ import Row from "../ui/Row";
 import SpaceTable from "../features/spaces/SpaceTable";
 import Button from "../ui/Button";
 import { useState } from "react";
-import FormModal from "../ui/Modal";
+import FormModal from "../ui/FormModal";
 function Spaces() {
   const [showForm, setShowForm] = useState(false);
 
@@ -18,7 +18,9 @@ function Spaces() {
         <Button onClick={() => setShowForm((showForm) => !showForm)}>
           Add Space
         </Button>
-        {showForm && <FormModal />}
+        {showForm && (
+          <FormModal showForm={showForm} setShowForm={setShowForm} />
+        )}
       </Row>
     </>
   );

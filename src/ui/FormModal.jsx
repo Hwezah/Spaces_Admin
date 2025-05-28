@@ -48,10 +48,16 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
-export default function FormModal() {
+export default function FormModal({ spaceToEdit, showForm, setShowForm }) {
   return (
-    <StyledModal>
-      <CreateSpaceForm />
-    </StyledModal>
+    <Overlay>
+      <StyledModal>
+        <CreateSpaceForm
+          spaceToEdit={spaceToEdit}
+          showForm={showForm}
+          setShowForm={setShowForm}
+        />
+      </StyledModal>
+    </Overlay>
   );
 }

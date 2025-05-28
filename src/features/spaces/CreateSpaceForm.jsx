@@ -1,14 +1,13 @@
 import styled from "styled-components";
-import { createSpace } from "../../services/apiSpaces";
+import useCreateSpace from "./useCreateSpace";
+import useEditSpace from "./useEditSpace";
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import { Textarea } from "../../ui/Textarea";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+
 const FormRow = styled.div`
   display: grid;
   align-items: center;
@@ -45,52 +44,72 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function CreateSpaceForm() {
-  const queryClient = useQueryClient();
-  const { isLoading: isCreating, mutate } = useMutation({
-    // mutationFn: (newSpace) => createSpace(newSpace), same thing as bellow
-    mutationFn: createSpace,
-    // onSuccess is a callback function that will be called when the mutation is successful
-    onSuccess: () => {
-      // invalidateQueries is a function from react-query to invalidate the cached data of the query
-      queryClient.invalidateQueries({ queryKey: ["spaces"] });
-      // reset function is called from useForm hook to reset the form fields
-      reset();
-      // toast is a function from react-toastify to show a success message
-      toast.success("Space added successfully!");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+function CreateSpaceForm({ spaceToEdit = {}, showForm, setShowForm }) {
+  const { isCreating, createSpace } = useCreateSpace();
+  const { isEditing, editSpace } = useEditSpace();
+  const isWorking = isCreating || isEditing;
+  const { id: editId, ...editValues } = spaceToEdit;
+  const isEditSession = Boolean(editId);
+
   // useForm hook to manage form state and validation from react
   // replaces the need to make inputs controlled components and handles
   // the form submission logic
   // { register, handleSubmit, errors, reset } props are provided by the useForm hook
-  const { register, handleSubmit, errors, reset } = useForm();
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: isEditSession ? editValues : {},
+  });
   // data is comming from the fields that are passed to the form
   // and I'm trying to push it to spaces(at supabase) and then invalidate the query
   // so that the new data is fetched and displayed on the page (queryClient.invalidateQueries)
   // onSubmission is my custom built function to be called by react hook form
   // when the form is submitted
   function onSubmission(data) {
-    mutate(data); // mutate function is called from useMutation hook to mutate the data on the server
+    const image = typeof data.image === "string" ? data.image : data.image[0];
+    if (isEditSession)
+      editSpace(
+        { newSpaceData: { ...data, image }, id: editId },
+        {
+          onSuccess: (data) => reset(),
+        }
+      );
+    else
+      createSpace(
+        { ...data, image: image },
+        {
+          onSuccess: (data) => reset(),
+        }
+      );
   }
   return (
     <Form onSubmit={handleSubmit(onSubmission)}>
       <FormRow>
         <Label htmlFor="name">Space name</Label>
-        <Input type="text" id="name" {...register("name")} />
+        <Input
+          type="text"
+          id="name"
+          {...register("name")}
+          disabled={isWorking}
+        />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" {...register("maxCapacity")} />
+        <Input
+          type="number"
+          id="maxCapacity"
+          {...register("maxCapacity")}
+          disabled={isWorking}
+        />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" {...register("regularPrice")} />
+        <Input
+          type="number"
+          id="regularPrice"
+          {...register("regularPrice")}
+          disabled={isWorking}
+        />
       </FormRow>
 
       <FormRow>
@@ -100,6 +119,7 @@ function CreateSpaceForm() {
           id="discount"
           defaultValue={0}
           {...register("discount")}
+          disabled={isWorking}
         />
       </FormRow>
 
@@ -109,22 +129,34 @@ function CreateSpaceForm() {
           type="number"
           id="description"
           defaultValue=""
-          {...register("description")}
+          {...register("description", { required: "This field is required" })}
+          disabled={isWorking}
         />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="image">Space photo</Label>
-        <FileInput id="image" accept="image/*" />
+        <FileInput
+          id="image"
+          accept="image/*"
+          type="file" // ability to select multiple files from the local file system
+          {...register("image", {
+            required: isEditSession ? false : "This field is required",
+          })}
+        />
       </FormRow>
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => setShowForm((showForm) => !showForm)}
+        >
           Cancel
         </Button>
-        <Button disabled={isCreating} type="submit">
-          Create space
+        <Button disabled={isWorking} type="submit">
+          {isEditSession ? "Edit Space" : "Create Space"}
         </Button>
       </FormRow>
     </Form>
