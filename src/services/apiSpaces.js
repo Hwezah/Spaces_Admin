@@ -39,6 +39,7 @@ export async function createEditSpace(newSpace, id) {
     console.error(error);
     throw new Error("Space could not be created.");
   }
+  if (hasImagepath) return data;
 
   // Upload image only if it's a File
   if (newSpace.image && typeof newSpace.image !== "string") {

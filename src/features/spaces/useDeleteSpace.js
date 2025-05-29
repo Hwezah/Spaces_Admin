@@ -2,7 +2,7 @@ import { deleteSpace as deleteCabinApi } from "../../services/apiSpaces";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-export default function UseDeleteSpace() {
+export default function useDeleteSpace() {
   const queryClient = useQueryClient();
   // useMutation is a hook from react-query to delete(mutate) data in this case a space
   // deleteSpace is a function(from supabase...in my apiSpaces.js) that will be passed to the mutationFn prop of useMutation

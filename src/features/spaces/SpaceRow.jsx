@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { formatCurrency } from "../../utils/helpers";
-import UseDeleteSpace from "./useDeleteSpace";
+import useDeleteSpace from "./useDeleteSpace";
+import useCreateSpace from "./useCreateSpace";
 import { useState } from "react";
 import FormModal from "../../ui/FormModal";
 import {
@@ -50,7 +51,9 @@ const Discount = styled.div`
 
 export default function SpaceRow({ space }) {
   const [showForm, setShowForm] = useState(false);
-  const { deleteSpace, isDeleting } = UseDeleteSpace();
+  const { deleteSpace, isDeleting } = useDeleteSpace();
+  const { isCreating, createSpace } = useCreateSpace();
+
   const {
     id: spaceId,
     name,
@@ -58,7 +61,19 @@ export default function SpaceRow({ space }) {
     regularPrice,
     discount,
     image,
+    description,
   } = space;
+
+  function handleDuplicate() {
+    createSpace({
+      name: `Copy of ${name}`,
+      maxCapacity,
+      regularPrice,
+      discount,
+      image,
+      description,
+    });
+  }
 
   return (
     <>
@@ -72,17 +87,24 @@ export default function SpaceRow({ space }) {
         ) : (
           <span>&mdash;</span>
         )}
+
         <div className="flex gap-2">
-          <HiMiniPencilSquare
-            size={24}
-            onClick={() => setShowForm((showForm) => !showForm)}
-          />
-          <HiMiniTrash
-            size={24}
-            onClick={() => deleteSpace(spaceId)}
-            disabled={isDeleting}
-          />
-          <HiMiniDocumentDuplicate size={24} />
+          <button>
+            <HiMiniPencilSquare
+              size={24}
+              onClick={() => setShowForm((showForm) => !showForm)}
+            />
+          </button>
+          <button>
+            <HiMiniTrash
+              size={24}
+              onClick={() => deleteSpace(spaceId)}
+              disabled={isDeleting}
+            />
+          </button>
+          <button onClick={handleDuplicate} disabled={isCreating}>
+            <HiMiniDocumentDuplicate size={24} />
+          </button>
         </div>
       </TableRow>
       {showForm && (

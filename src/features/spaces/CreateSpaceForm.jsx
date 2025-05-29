@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 const FormRow = styled.div`
   display: grid;
   align-items: center;
-  grid-template-columns: 24rem 1fr 1.2fr;
+  grid-template-columns: 1fr 1fr;
   gap: 2.4rem;
 
   padding: 1.2rem 0;
@@ -37,6 +37,8 @@ const FormRow = styled.div`
 
 const Label = styled.label`
   font-weight: 500;
+  display: block;
+  margin-bottom: 0.8rem;
 `;
 
 const Error = styled.span`
@@ -83,67 +85,70 @@ function CreateSpaceForm({ spaceToEdit = {}, showForm, setShowForm }) {
   return (
     <Form onSubmit={handleSubmit(onSubmission)}>
       <FormRow>
-        <Label htmlFor="name">Space name</Label>
-        <Input
-          type="text"
-          id="name"
-          {...register("name")}
-          disabled={isWorking}
-        />
+        <div>
+          <Label htmlFor="name">Space name</Label>
+          <Input
+            type="text"
+            id="name"
+            {...register("name")}
+            disabled={isWorking}
+          />
+        </div>
+        <div>
+          <Label htmlFor="maxCapacity">Maximum capacity</Label>
+          <Input
+            type="number"
+            id="maxCapacity"
+            {...register("maxCapacity")}
+            disabled={isWorking}
+          />
+        </div>
       </FormRow>
 
       <FormRow>
-        <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input
-          type="number"
-          id="maxCapacity"
-          {...register("maxCapacity")}
-          disabled={isWorking}
-        />
+        <div>
+          <Label htmlFor="regularPrice">Regular price</Label>
+          <Input
+            type="number"
+            id="regularPrice"
+            {...register("regularPrice")}
+            disabled={isWorking}
+          />
+        </div>
+        <div>
+          <Label htmlFor="discount">Discount</Label>
+          <Input
+            type="number"
+            id="discount"
+            defaultValue={0}
+            {...register("discount")}
+            disabled={isWorking}
+          />
+        </div>
       </FormRow>
-
       <FormRow>
-        <Label htmlFor="regularPrice">Regular price</Label>
-        <Input
-          type="number"
-          id="regularPrice"
-          {...register("regularPrice")}
-          disabled={isWorking}
-        />
-      </FormRow>
+        <div>
+          <Label htmlFor="description">Description for website</Label>
+          <Textarea
+            type="number"
+            id="description"
+            defaultValue=""
+            {...register("description", { required: "This field is required" })}
+            disabled={isWorking}
+          />
+        </div>
 
-      <FormRow>
-        <Label htmlFor="discount">Discount</Label>
-        <Input
-          type="number"
-          id="discount"
-          defaultValue={0}
-          {...register("discount")}
-          disabled={isWorking}
-        />
-      </FormRow>
-
-      <FormRow>
-        <Label htmlFor="description">Description for website</Label>
-        <Textarea
-          type="number"
-          id="description"
-          defaultValue=""
-          {...register("description", { required: "This field is required" })}
-          disabled={isWorking}
-        />
-      </FormRow>
-
-      <FormRow>
-        <Label htmlFor="image">Space photo</Label>
-        <FileInput
-          id="image"
-          accept="image/*"
-          type="file" // ability to select multiple files from the local file system
-          {...register("image", {
-            required: isEditSession ? false : "This field is required",
-          })}
-        />
+        <div>
+          <Label htmlFor="image">Space photo</Label>
+          <FileInput
+            id="image"
+            accept="image/*"
+            type="file" // ability to select multiple files from the local file system
+            {...register("image", {
+              required: isEditSession ? false : "This field is required",
+            })}
+          />
+        </div>
       </FormRow>
 
       <FormRow>

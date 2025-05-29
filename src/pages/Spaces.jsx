@@ -15,7 +15,10 @@ function Spaces() {
       </Row>
       <Row>
         <SpaceTable />
-        <Button onClick={() => setShowForm((showForm) => !showForm)}>
+        <Button
+          className="w-max"
+          onClick={() => setShowForm((showForm) => !showForm)}
+        >
           Add Space
         </Button>
         {showForm && (
