@@ -1,5 +1,8 @@
+import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
-import CreateSpaceForm from "../features/spaces/CreateSpaceForm";
+import { createPortal } from "react-dom";
+import { useEffect, useRef } from "react";
+
 const StyledModal = styled.div`
   position: fixed;
   top: 50%;
@@ -8,7 +11,7 @@ const StyledModal = styled.div`
   background-color: var(--color-grey-0);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
-  padding: 3.2rem 4rem;
+  padding: 6rem;
   transition: all 0.5s;
 `;
 
@@ -32,8 +35,8 @@ const Button = styled.button`
   transform: translateX(0.8rem);
   transition: all 0.2s;
   position: absolute;
-  top: 1.2rem;
-  right: 1.9rem;
+  top: 3rem;
+  right: 4rem;
 
   &:hover {
     background-color: var(--color-grey-100);
@@ -48,16 +51,27 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
-export default function FormModal({ spaceToEdit, showForm, setShowForm }) {
-  return (
+export default function Modal({ children, onCloseModal }) {
+  const modalRef = useRef();
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (!modalRef.current || modalRef.current.contains(e.target)) return;
+      onCloseModal();
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onCloseModal]);
+  return createPortal(
     <Overlay>
-      <StyledModal>
-        <CreateSpaceForm
-          spaceToEdit={spaceToEdit}
-          showForm={showForm}
-          setShowForm={setShowForm}
-        />
+      <StyledModal ref={modalRef}>
+        <Button onClick={onCloseModal}>
+          <HiXMark />
+        </Button>
+        <div>{children}</div>
       </StyledModal>
-    </Overlay>
+    </Overlay>,
+    document.body
   );
 }

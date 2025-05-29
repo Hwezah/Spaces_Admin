@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import { formatCurrency } from "../../utils/helpers";
-import useDeleteSpace from "./useDeleteSpace";
+
 import useCreateSpace from "./useCreateSpace";
+import Modal from "../../ui/Modal";
+import CreateSpaceForm from "./CreateSpaceForm";
+import DeleteSpaceModal from "./DeleteSpaceModal";
 import { useState } from "react";
-import FormModal from "../../ui/FormModal";
 import {
   HiMiniTrash,
   HiMiniPencilSquare,
@@ -50,8 +52,8 @@ const Discount = styled.div`
 `;
 
 export default function SpaceRow({ space }) {
-  const [showForm, setShowForm] = useState(false);
-  const { deleteSpace, isDeleting } = useDeleteSpace();
+  const [isOpenFormModal, setIsOpenFormModal] = useState(false);
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const { isCreating, createSpace } = useCreateSpace();
 
   const {
@@ -92,27 +94,32 @@ export default function SpaceRow({ space }) {
           <button>
             <HiMiniPencilSquare
               size={24}
-              onClick={() => setShowForm((showForm) => !showForm)}
+              onClick={() => setIsOpenFormModal(true)}
             />
           </button>
           <button>
-            <HiMiniTrash
-              size={24}
-              onClick={() => deleteSpace(spaceId)}
-              disabled={isDeleting}
-            />
+            <HiMiniTrash size={24} onClick={() => setIsOpenDeleteModal(true)} />
           </button>
           <button onClick={handleDuplicate} disabled={isCreating}>
             <HiMiniDocumentDuplicate size={24} />
           </button>
         </div>
       </TableRow>
-      {showForm && (
-        <FormModal
-          spaceToEdit={space}
-          showForm={showForm}
-          setShowForm={setShowForm}
-        />
+      {isOpenFormModal && (
+        <Modal onCloseModal={() => setIsOpenFormModal(false)}>
+          <CreateSpaceForm
+            spaceToEdit={space}
+            onCloseModal={() => setIsOpenFormModal(false)}
+          />
+        </Modal>
+      )}
+      {isOpenDeleteModal && (
+        <Modal onCloseModal={() => setIsOpenDeleteModal(false)}>
+          <DeleteSpaceModal
+            spaceId={spaceId}
+            onCloseModal={() => setIsOpenDeleteModal(false)}
+          />
+        </Modal>
       )}
     </>
   );

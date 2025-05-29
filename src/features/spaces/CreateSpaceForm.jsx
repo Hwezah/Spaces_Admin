@@ -46,7 +46,7 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function CreateSpaceForm({ spaceToEdit = {}, showForm, setShowForm }) {
+function CreateSpaceForm({ spaceToEdit = {}, onCloseModal }) {
   const { isCreating, createSpace } = useCreateSpace();
   const { isEditing, editSpace } = useEditSpace();
   const isWorking = isCreating || isEditing;
@@ -71,19 +71,28 @@ function CreateSpaceForm({ spaceToEdit = {}, showForm, setShowForm }) {
       editSpace(
         { newSpaceData: { ...data, image }, id: editId },
         {
-          onSuccess: (data) => reset(),
+          onSuccess: (data) => {
+            reset();
+            onCloseModal?.();
+          },
         }
       );
     else
       createSpace(
         { ...data, image: image },
         {
-          onSuccess: (data) => reset(),
+          onSuccess: (data) => {
+            reset();
+            onCloseModal?.();
+          },
         }
       );
   }
   return (
-    <Form onSubmit={handleSubmit(onSubmission)}>
+    <Form
+      onSubmit={handleSubmit(onSubmission)}
+      type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow>
         <div>
           <Label htmlFor="name">Space name</Label>
@@ -156,7 +165,7 @@ function CreateSpaceForm({ spaceToEdit = {}, showForm, setShowForm }) {
         <Button
           variation="secondary"
           type="reset"
-          onClick={() => setShowForm((showForm) => !showForm)}
+          onClick={() => onCloseModal?.()}
         >
           Cancel
         </Button>
