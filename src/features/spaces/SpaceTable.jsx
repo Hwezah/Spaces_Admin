@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import useSpaces from "./useSpaces";
+import useSpaces from "../spaces/useSpaces";
 import Spinner from "../../ui/Spinner";
 import SpaceRow from "../spaces/SpaceRow";
-
+import { useState } from "react";
 const Table = styled.div`
   border: 1px solid var(--color-grey-200);
 
@@ -28,7 +28,9 @@ const TableHeader = styled.header`
 `;
 
 export default function SpaceTable() {
+  const [openMenuId, setOpenMenuId] = useState(null); // tracks which row's menu is open
   const { spaces, isLoading } = useSpaces();
+  console.log(spaces);
   if (isLoading) return <Spinner />; //isLoading, error statuses are provided by reactquery by default
 
   return (
@@ -41,8 +43,13 @@ export default function SpaceTable() {
         <div>Discount</div>
         <div></div>
       </TableHeader>
-      {spaces?.map((space) => (
-        <SpaceRow key={space.id} space={space} />
+      {(spaces || []).map((space) => (
+        <SpaceRow
+          key={space.id}
+          space={space}
+          openMenuId={openMenuId}
+          setOpenMenuId={setOpenMenuId}
+        />
       ))}
     </Table>
   );

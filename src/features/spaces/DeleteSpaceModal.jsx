@@ -20,10 +20,10 @@ export default function DeleteSpaceModal({ spaceId }) {
 
   return (
     <div className="flex flex-col gap-4 ">
-      <h1 className="bold text-2xl">Delete Space?</h1>
+      <h1 className="font-semibold">Delete Space?</h1>
       <p className="">
         Are you sure you want to delete this space permanently?{" "}
-        <p>This action cannot be undone.</p>
+        <span className="block">This action cannot be undone.</span>
       </p>
       <div className="flex gap-4 justify-end">
         <Button

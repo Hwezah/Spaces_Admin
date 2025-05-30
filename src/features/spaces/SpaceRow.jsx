@@ -5,6 +5,9 @@ import DeleteSpace from "./DeleteSpace"; // Import the refactored DeleteSpace co
 import { HiMiniPencilSquare, HiMiniDocumentDuplicate } from "react-icons/hi2";
 import Modal from "../../ui/Modal"; // For the edit modal
 import CreateSpaceForm from "./CreateSpaceForm"; // For the edit modal
+import { HiEllipsisVertical } from "react-icons/hi2";
+import { useEffect, useRef } from "react";
+
 const TableRow = styled.div`
   display: grid;
   grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
@@ -44,8 +47,19 @@ const Discount = styled.div`
   color: var(--color-green-700);
 `;
 
-export default function SpaceRow({ space }) {
+export default function SpaceRow({ space, openMenuId, setOpenMenuId }) {
   const { isCreating, createSpace } = useCreateSpace();
+  const menuRef = useRef();
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (!menuRef.current || menuRef.current.contains(e.target)) return;
+      setOpenMenuId(null);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setOpenMenuId]);
 
   const {
     id: spaceId,
@@ -56,7 +70,7 @@ export default function SpaceRow({ space }) {
     image,
     description,
   } = space;
-
+  const isOpenModal = openMenuId === spaceId;
   function handleDuplicate() {
     createSpace({
       name: `Copy of ${name}`,
@@ -80,50 +94,49 @@ export default function SpaceRow({ space }) {
         ) : (
           <span>&mdash;</span>
         )}
-
-        <div className="flex gap-2">
-          <Modal>
-            <Modal.OpenForm opensSpaceForm={`edit-space-form-${spaceId}`}>
-              <button aria-label="Edit space" className="p-1">
-                {" "}
-                {/* Added padding for easier clicking */}
-                <HiMiniPencilSquare size={24} />
-              </button>
-            </Modal.OpenForm>
-            <Modal.Window name={`edit-space-form-${spaceId}`}>
-              <CreateSpaceForm spaceToEdit={space} />
-            </Modal.Window>
-          </Modal>
-          <DeleteSpace spaceId={spaceId} />
-          <button
-            onClick={handleDuplicate}
-            disabled={isCreating}
-            aria-label="Duplicate space"
-            className="p-1"
-          >
-            {" "}
-            {/* Added padding */}
-            <HiMiniDocumentDuplicate size={24} />
+        <div className="relative">
+          <button className="p-1 w-fit focus:outline-none focus:ring-0">
+            <HiEllipsisVertical
+              size={24}
+              onClick={() =>
+                setOpenMenuId((prev) => (prev === spaceId ? null : spaceId))
+              }
+            />
           </button>
+
+          {isOpenModal && (
+            <div
+              className="flex flex-col gap-2 absolute shadow-md right-[16rem] top-0 bg-gray-50 rounded-lg !p-10"
+              ref={menuRef}
+            >
+              <Modal>
+                <Modal.OpenForm opensSpaceForm={`edit-space-form-${spaceId}`}>
+                  <button
+                    aria-label="Edit space"
+                    className="flex items-center gap-4 focus:outline-none focus:ring-0"
+                  >
+                    <HiMiniPencilSquare size={24} /> <span>Edit</span>
+                  </button>
+                </Modal.OpenForm>
+                <Modal.Window name={`edit-space-form-${spaceId}`}>
+                  <CreateSpaceForm spaceToEdit={space} />
+                </Modal.Window>
+              </Modal>
+              <DeleteSpace spaceId={spaceId} />
+              <button
+                onClick={handleDuplicate}
+                disabled={isCreating}
+                aria-label="Duplicate space"
+                className="flex items-center gap-4 focus:outline-none focus:ring-0"
+              >
+                {" "}
+                {/* Added padding */}
+                <HiMiniDocumentDuplicate size={24} /> <span>Duplicate</span>
+              </button>
+            </div>
+          )}
         </div>
       </TableRow>
-
-      {/* {isOpenFormModal && (
-        <Modal onCloseModal={() => setIsOpenFormModal(false)}>
-          <CreateSpaceForm
-            spaceToEdit={space}
-            onCloseModal={() => setIsOpenFormModal(false)}
-          />
-        </Modal>
-      )}
-      {isOpenDeleteModal && (
-        <Modal onCloseModal={() => setIsOpenDeleteModal(false)}>
-          <DeleteSpaceModal
-            spaceId={spaceId}
-            onCloseModal={() => setIsOpenDeleteModal(false)}
-          />
-        </Modal>
-      )} */}
     </>
   );
 }
