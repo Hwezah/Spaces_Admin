@@ -7,7 +7,8 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import { Textarea } from "../../ui/Textarea";
 import { useForm } from "react-hook-form";
-
+import { useContext } from "react";
+import { ModalContext } from "../../ui/Modal";
 const FormRow = styled.div`
   display: grid;
   align-items: center;
@@ -46,7 +47,8 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function CreateSpaceForm({ spaceToEdit = {}, onCloseModal }) {
+function CreateSpaceForm({ spaceToEdit = {} }) {
+  const { openName, close } = useContext(ModalContext);
   const { isCreating, createSpace } = useCreateSpace();
   const { isEditing, editSpace } = useEditSpace();
   const isWorking = isCreating || isEditing;
@@ -73,7 +75,7 @@ function CreateSpaceForm({ spaceToEdit = {}, onCloseModal }) {
         {
           onSuccess: (data) => {
             reset();
-            onCloseModal?.();
+            close?.();
           },
         }
       );
@@ -83,7 +85,7 @@ function CreateSpaceForm({ spaceToEdit = {}, onCloseModal }) {
         {
           onSuccess: (data) => {
             reset();
-            onCloseModal?.();
+            close?.();
           },
         }
       );
@@ -91,7 +93,7 @@ function CreateSpaceForm({ spaceToEdit = {}, onCloseModal }) {
   return (
     <Form
       onSubmit={handleSubmit(onSubmission)}
-      type={onCloseModal ? "modal" : "regular"}
+      type={close ? "modal" : "regular"}
     >
       <FormRow>
         <div>
@@ -162,11 +164,7 @@ function CreateSpaceForm({ spaceToEdit = {}, onCloseModal }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button
-          variation="secondary"
-          type="reset"
-          onClick={() => onCloseModal?.()}
-        >
+        <Button variation="secondary" type="reset" onClick={() => close?.()}>
           Cancel
         </Button>
         <Button disabled={isWorking} type="submit">

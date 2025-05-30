@@ -1,17 +1,10 @@
 import styled from "styled-components";
 import { formatCurrency } from "../../utils/helpers";
-
 import useCreateSpace from "./useCreateSpace";
-import Modal from "../../ui/Modal";
-import CreateSpaceForm from "./CreateSpaceForm";
-import DeleteSpaceModal from "./DeleteSpaceModal";
-import { useState } from "react";
-import {
-  HiMiniTrash,
-  HiMiniPencilSquare,
-  HiMiniDocumentDuplicate,
-} from "react-icons/hi2";
-
+import DeleteSpace from "./DeleteSpace"; // Import the refactored DeleteSpace componen
+import { HiMiniPencilSquare, HiMiniDocumentDuplicate } from "react-icons/hi2";
+import Modal from "../../ui/Modal"; // For the edit modal
+import CreateSpaceForm from "./CreateSpaceForm"; // For the edit modal
 const TableRow = styled.div`
   display: grid;
   grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
@@ -52,8 +45,6 @@ const Discount = styled.div`
 `;
 
 export default function SpaceRow({ space }) {
-  const [isOpenFormModal, setIsOpenFormModal] = useState(false);
-  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const { isCreating, createSpace } = useCreateSpace();
 
   const {
@@ -91,21 +82,33 @@ export default function SpaceRow({ space }) {
         )}
 
         <div className="flex gap-2">
-          <button>
-            <HiMiniPencilSquare
-              size={24}
-              onClick={() => setIsOpenFormModal(true)}
-            />
-          </button>
-          <button>
-            <HiMiniTrash size={24} onClick={() => setIsOpenDeleteModal(true)} />
-          </button>
-          <button onClick={handleDuplicate} disabled={isCreating}>
+          <Modal>
+            <Modal.OpenForm opensSpaceForm={`edit-space-form-${spaceId}`}>
+              <button aria-label="Edit space" className="p-1">
+                {" "}
+                {/* Added padding for easier clicking */}
+                <HiMiniPencilSquare size={24} />
+              </button>
+            </Modal.OpenForm>
+            <Modal.Window name={`edit-space-form-${spaceId}`}>
+              <CreateSpaceForm spaceToEdit={space} />
+            </Modal.Window>
+          </Modal>
+          <DeleteSpace spaceId={spaceId} />
+          <button
+            onClick={handleDuplicate}
+            disabled={isCreating}
+            aria-label="Duplicate space"
+            className="p-1"
+          >
+            {" "}
+            {/* Added padding */}
             <HiMiniDocumentDuplicate size={24} />
           </button>
         </div>
       </TableRow>
-      {isOpenFormModal && (
+
+      {/* {isOpenFormModal && (
         <Modal onCloseModal={() => setIsOpenFormModal(false)}>
           <CreateSpaceForm
             spaceToEdit={space}
@@ -120,7 +123,7 @@ export default function SpaceRow({ space }) {
             onCloseModal={() => setIsOpenDeleteModal(false)}
           />
         </Modal>
-      )}
+      )} */}
     </>
   );
 }
