@@ -2,6 +2,7 @@ import Button from "../../ui/Button";
 import useDeleteSpace from "./useDeleteSpace";
 import { useContext } from "react";
 import { ModalContext } from "../../ui/Modal";
+/* eslint-disable react/prop-types */
 
 export default function DeleteSpaceModal({ spaceId }) {
   const { deleteSpace, isDeleting } = useDeleteSpace();

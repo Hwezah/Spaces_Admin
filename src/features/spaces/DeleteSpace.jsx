@@ -1,6 +1,8 @@
 import Modal from "../../ui/Modal";
 import DeleteSpaceModal from "./DeleteSpaceModal";
 import { HiMiniTrash } from "react-icons/hi2";
+/* eslint-disable react/prop-types */
+
 export default function DeleteSpace({ spaceId }) {
   return (
     <>

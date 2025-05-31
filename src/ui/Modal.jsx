@@ -9,6 +9,8 @@ import {
   cloneElement,
 } from "react";
 import { useState } from "react";
+/* eslint-disable react/prop-types */
+
 const StyledModal = styled.div`
   position: fixed;
   top: 50%;

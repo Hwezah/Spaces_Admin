@@ -7,18 +7,20 @@ import Modal from "../../ui/Modal"; // For the edit modal
 import CreateSpaceForm from "./CreateSpaceForm"; // For the edit modal
 import { HiEllipsisVertical } from "react-icons/hi2";
 import { useEffect, useRef } from "react";
+import Table from "../../ui/Table";
+/* eslint-disable react/prop-types */
 
-const TableRow = styled.div`
-  display: grid;
-  grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
-  column-gap: 2.4rem;
-  align-items: center;
-  padding: 1.4rem 2.4rem;
+// const TableRow = styled.div`
+//   display: grid;
+//   grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
+//   column-gap: 2.4rem;
+//   align-items: center;
+//   padding: 1.4rem 2.4rem;
 
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-`;
+//   &:not(:last-child) {
+//     border-bottom: 1px solid var(--color-grey-100);
+//   }
+// `;
 
 const Img = styled.img`
   display: block;
@@ -84,7 +86,7 @@ export default function SpaceRow({ space, openMenuId, setOpenMenuId }) {
 
   return (
     <>
-      <TableRow role="row">
+      <Table.Row>
         <Img src={image} alt={name} />
         <Space>{name}</Space>
         <div>fits up to {maxCapacity} guests</div>
@@ -136,7 +138,7 @@ export default function SpaceRow({ space, openMenuId, setOpenMenuId }) {
             </div>
           )}
         </div>
-      </TableRow>
+      </Table.Row>
     </>
   );
 }
