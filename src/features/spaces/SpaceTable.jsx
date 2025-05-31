@@ -1,24 +1,9 @@
-import styled from "styled-components";
 import useSpaces from "../spaces/useSpaces";
 import Spinner from "../../ui/Spinner";
 import SpaceRow from "../spaces/SpaceRow";
 import { useState } from "react";
 import Table from "../../ui/Table";
 import { useSearchParams } from "react-router-dom";
-const TableHeader = styled.header`
-  display: grid;
-  grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
-  column-gap: 2.4rem;
-  align-items: center;
-
-  background-color: var(--color-grey-50);
-  border-bottom: 1px solid var(--color-grey-100);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  font-weight: 600;
-  color: var(--color-grey-600);
-  padding: 1.6rem 2.4rem;
-`;
 
 export default function SpaceTable() {
   const [openMenuId, setOpenMenuId] = useState(null); // tracks which row's menu is open
@@ -33,7 +18,7 @@ export default function SpaceTable() {
       </p>
     );
   }
-
+  // Filter
   const filterValue = searchParams.get("discount") || "all"; //filter is a query param that is passed in the url
   let filteredSpaces; //filteredSpaces is a copy of spaces that will be used to render the table
   if (filterValue === "all") filteredSpaces = spaces;
@@ -41,6 +26,36 @@ export default function SpaceTable() {
     filteredSpaces = spaces.filter((space) => space.discount > 0);
   if (filterValue === "no-discount")
     filteredSpaces = spaces.filter((space) => space.discount === 0);
+
+  // Sort
+  // const sortBy = searchParams.get("sortBy") || "startDate-asc";
+  const sortBy = searchParams.get("sortBy") || "name-asc"; // Default to a valid option
+  const [field, direction] = sortBy.split("-");
+  const modifier = direction === "asc" ? 1 : -1;
+  // Sort a copy of filteredSpaces
+  const sortedSpaces = [...filteredSpaces].sort((a, b) => {
+    const valA = a[field];
+    const valB = b[field];
+
+    let comparisonResult;
+
+    // Handle string fields
+    if (field === "name") {
+      comparisonResult = String(valA ?? "").localeCompare(String(valB ?? ""));
+    }
+    // Handle numeric fields
+    else if (field === "regularPrice" || field === "maxCapacity") {
+      comparisonResult = (Number(valA) || 0) - (Number(valB) || 0);
+    }
+    // Fallback for any other fields (should ideally not be reached if sortBy values are controlled)
+    else {
+      if (valA < valB) comparisonResult = -1;
+      else if (valA > valB) comparisonResult = 1;
+      else comparisonResult = 0;
+    }
+
+    return comparisonResult * modifier;
+  });
   return (
     <Table columns="0.6fr 1.8fr 2.2fr 1fr 1fr 1fr">
       <Table.Header>
@@ -52,7 +67,7 @@ export default function SpaceTable() {
         <div></div>
       </Table.Header>
       <Table.Body
-        data={filteredSpaces}
+        data={sortedSpaces}
         render={(space) => (
           <SpaceRow
             key={space.id}
