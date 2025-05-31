@@ -109,7 +109,7 @@ export default function SpaceRow({ space, openMenuId, setOpenMenuId }) {
           {isOpenModal && (
             <div
               className="flex flex-col gap-2 absolute shadow-md right-[16rem] top-0 bg-gray-50 rounded-lg !p-10"
-              ref={menuRef}
+              // ref={menuRef}
             >
               <Modal>
                 <Modal.OpenForm opensSpaceForm={`edit-space-form-${spaceId}`}>
