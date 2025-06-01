@@ -33,7 +33,7 @@ const Amount = styled.div`
   font-family: "Sono";
   font-weight: 500;
 `;
-
+/* eslint-disable react/prop-types */
 function BookingRow({
   booking: {
     id: bookingId,
@@ -53,7 +53,7 @@ function BookingRow({
     "checked-in": "green",
     "checked-out": "silver",
   };
-
+  if (!guestName) return null;
   return (
     <Table.Row>
       <Space>{spaceName}</Space>

@@ -1,15 +1,16 @@
-import useSpaces from "../spaces/useSpaces";
+import { useSpaces } from "../spaces/useSpaces";
 import Spinner from "../../ui/Spinner";
 import SpaceRow from "../spaces/SpaceRow";
 import { useState } from "react";
 import Table from "../../ui/Table";
 import { useSearchParams } from "react-router-dom";
-
+import Empty from "../../ui/Empty";
 export default function SpaceTable() {
   const [openMenuId, setOpenMenuId] = useState(null); // tracks which row's menu is open
   const { spaces, isLoading, error } = useSpaces();
   const [searchParams] = useSearchParams();
   if (isLoading) return <Spinner />; //isLoading, error statuses are provided by reactquery by default
+  if (!spaces.length) return <Empty resourceName="spaces" />;
 
   if (error) {
     return (

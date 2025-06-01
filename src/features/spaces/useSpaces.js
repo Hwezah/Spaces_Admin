@@ -1,6 +1,6 @@
 import { getSpaces } from "../../services/apiSpaces";
 import { useQuery } from "@tanstack/react-query";
-export default function useSpaces() {
+export function useSpaces() {
   // useQuery is a hook provided by reactQuery to fetch data from an api
   const {
     data: spaces,
