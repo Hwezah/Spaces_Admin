@@ -7,9 +7,14 @@ export async function getBookings({ filter, sortBy }) {
       spaces(name), guests(fullName, email)
     `);
 
-  //Filter
-  if (filter !== null) query = query.eq(filter.field, filter.value);
-
+  // Serverside Filtering
+  if (filter) query = query.eq(filter.field, filter.value);
+  // Serverside Sorting
+  if (sortBy)
+    query = query.order(sortBy.field, {
+      // ascending property is provided by supabase's .order property
+      ascending: sortBy.direction === "asc",
+    });
   const { data, error } = await query;
   if (error) {
     throw new Error("Bookings could not be fetched.");
