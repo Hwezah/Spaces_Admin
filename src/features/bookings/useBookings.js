@@ -14,18 +14,22 @@ export function useBookings() {
   const sortByRaw = searchParams.get("sortBy") || "startDate-desc";
   const [field, direction] = sortByRaw.split("-");
   const sortBy = { field, direction };
+  // Pagination
+  const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
+
   // useQuery is a hook provided by reactQuery to fetch data from an api
   const {
-    data: bookings,
+    data: { data: bookings, count } = {},
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["bookings", filter, sortBy], // here reactQuery will use this key to identify the query(slot in memory where data is cached)
-    queryFn: () => getBookings({ filter, sortBy }), // This is the actual api call to fetch the data
+    queryKey: ["bookings", filter, sortBy, page], // here reactQuery will use this key to identify the query(slot in memory where data is cached)
+    queryFn: () => getBookings({ filter, sortBy, page }), // This is the actual api call to fetch the data
   });
   return {
     bookings,
     isLoading,
     error,
+    count,
   };
 }
