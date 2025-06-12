@@ -3,8 +3,9 @@ import { formatCurrency } from "../../utils/helpers";
 import useCreateSpace from "./useCreateSpace";
 import DeleteSpace from "./DeleteSpace"; // Import the refactored DeleteSpace componen
 import { HiMiniPencilSquare, HiMiniDocumentDuplicate } from "react-icons/hi2";
-import Modal from "../../ui/Modal"; // For the edit modal
+
 import CreateSpaceForm from "./CreateSpaceForm"; // For the edit modal
+import Modal from "../../ui/Modal"; // For the edit modal
 import { HiEllipsisVertical } from "react-icons/hi2";
 import { useEffect, useRef } from "react";
 import Table from "../../ui/Table";
